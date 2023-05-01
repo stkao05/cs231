@@ -1,6 +1,5 @@
 from __future__ import print_function
 from builtins import range
-from past.builtins import xrange
 
 import numpy as np
 from random import randrange
@@ -80,7 +79,8 @@ def eval_numerical_gradient_blobs(f, inputs, output, h=1e-5):
     numeric_diffs = []
     for input_blob in inputs:
         diff = np.zeros_like(input_blob.diffs)
-        it = np.nditer(input_blob.vals, flags=["multi_index"], op_flags=["readwrite"])
+        it = np.nditer(input_blob.vals, flags=[
+                       "multi_index"], op_flags=["readwrite"])
         while not it.finished:
             idx = it.multi_index
             orig = input_blob.vals[idx]

@@ -26,6 +26,7 @@ def svm_loss_naive(W, X, y, reg):
     num_classes = W.shape[1]
     num_train = X.shape[0]
     loss = 0.0
+
     for i in range(num_train):
         scores = X[i].dot(W)
         correct_class_score = scores[y[i]]
@@ -34,6 +35,8 @@ def svm_loss_naive(W, X, y, reg):
                 continue
             margin = scores[j] - correct_class_score + 1  # note delta = 1
             if margin > 0:
+                dW[:, y[i]] -= X[i, :]
+                dW[:, j] += X[i]
                 loss += margin
 
     # Right now the loss is a sum over all training examples, but we want it
@@ -53,7 +56,8 @@ def svm_loss_naive(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    dW /= num_train
+    dW += 2 * reg * W
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -75,10 +79,20 @@ def svm_loss_vectorized(W, X, y, reg):
     # result in loss.                                                           #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+    N, _ = X.shape
+    scores = X @ W  # (N, K)
 
-    pass
+    sy = scores[np.arange(N), y]  # (N,)
+    loss = scores - sy.reshape(-1, 1) + 1  # (N, K)
+    loss[np.arange(N), y] = 0
+    loss = L = np.maximum(np.zeros(loss.shape), loss)  # (N, K)
+    loss = 1 / N * loss.sum() + reg * (W**2).sum()  # (1,)
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+    # X (N, D)
+    # dW = X
+    # print(A)
 
     #############################################################################
     # TODO:                                                                     #
@@ -91,7 +105,11 @@ def svm_loss_vectorized(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    L[L > 0] = 1
+    L[np.arange(N), y] = -L.sum(axis=1)
+    dW = X.T @ L
+    dW /= N
+    dW += 2 * reg * W
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
