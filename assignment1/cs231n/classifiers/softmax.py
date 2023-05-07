@@ -31,9 +31,26 @@ def softmax_loss_naive(W, X, y, reg):
     # regularization!                                                           #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+    N, D = X.shape
+    D, C = W.shape
 
-    pass
+    for i in range(N):
+        xi = X[i]  # (D)
+        yi = y[i]
+        z = xi @ W  # (C)
+        logits = np.zeros_like(z)
+        lmax = np.exp(np.max(z))
 
+        for j in range(C):
+            logits[j] = np.exp(z[j] - lmax)
+
+        lsum = np.sum(logits)
+        logits /= lsum
+        prob = logits[yi]
+        loss += -np.log(prob)
+
+    loss /= N
+    loss += reg * np.sum(W**2)
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     return loss, dW
@@ -56,8 +73,30 @@ def softmax_loss_vectorized(W, X, y, reg):
     # regularization!                                                           #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+    N, _ = X.shape
+    logits = X @ W  # (N, C)
 
-    pass
+    logit_max = logits.max(axis=1, keepdims=True)  # (N, 1)
+    norm_logits = logits - logit_max  # (N, C)
+
+    counts = np.exp(norm_logits)  # (N, C)
+    counts_sum = counts.sum(axis=1, keepdims=True)  # (N, 1)
+    counts_sum_div = counts_sum**-1  # (N, 1)
+    probs = counts * counts_sum_div  # (N, C)
+    logprobs = np.log(probs)
+    loss = -logprobs[range(N), y].mean()
+
+    # back propogation
+    # dlogprob = -1 / N * np.ones_like(logprob)  # (N, )
+    # dprob = 1 / prob * dlogprob  # (N, )
+
+    # dlogits = np.zeros_like(logits)  # (N, C)
+    # dlogits[np.arrange(N), y] = dprob
+
+    # dzexp = np.ones_like(zexp)
+
+    # dZ = np.copy(Z)
+    # dZ[np.arange, y] =
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
