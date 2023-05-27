@@ -3,3 +3,12 @@ cifar-10-python.tar.gz
 cifar-10-batches-py
 .vscode
 **/__pycache__
+
+assignment1/cifar-10-python.tar.gz
+assignment1/cs231n/datasets/cifar-10-batches-py
+
+assignment2/cs231n/datasets/cifar-10-batches-py
+assignment2/cs231n/datasets/cifar-10-python.tar.gz
+
+assignment3/cs231n/datasets/imagenet_val_25.npz
+assignment3/cs231n/datasets/coco_captioning
